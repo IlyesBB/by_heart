@@ -2,6 +2,12 @@
 Create flashcards and review them, while recording performance.
 
 # Execution
+Go in the project folder.   
+Install the dependancies:
+```
+pip install -r requirements.txt
+```
+And run the app:
 ```
 python app.py
 ```
