@@ -1,0 +1,21 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="{{ css_file_path }}" rel="stylesheet" />
+</head>
+<body onload="on_load()">
+    <div id="question">{{ question }}</div>
+    <div id="correction">{{ correction }}</div>
+    <script>
+        function on_load(){
+            /* Dynamically hides #question or #correction elements according to Jinja2 render arguments
+            ******************************************************************************************/
+            question = document.getElementById('question');
+            correction = document.getElementById('correction');
+            question.style.display = "{{ display_question }}";
+            correction.style.display = "{{ display_correction }}";
+        }
+    </script>
+</body>
+</html>
