@@ -19,5 +19,5 @@ A flashcard question is displaying.
 Write the answer on a sheet of paper. When you're finished, press space.   
 The correction is displaying.   
 If your answer is correct, press return. Else, press shift+return.   
-Press enter to display next card.   
+Press space key to display next card.   
 
