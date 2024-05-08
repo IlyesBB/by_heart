@@ -30,7 +30,7 @@ class QDeckEditor(QWidget):
         self.tree = QTreeDeck(self)
         self.buttons = QDeckButtons(parent=self)
         self.start_button = QPushButton('Start')
-        self.start_button.setStyleSheet("font-size: 22px; background-color: rgba(0,255,0,1)")
+        self.start_button.setStyleSheet("font-size: 22px")
         self.exam = QtExam()
         # Adding widgets to layout
         ############################
