@@ -29,8 +29,6 @@ templates_directory = os.path.join(project_directory, 'gui', 'templates')
 
 # intervals: Flashcard review intervals
 intervals = [
-    timedelta(minutes=15),
-    timedelta(hours=1),
     timedelta(days=1),
     timedelta(days=2),
     timedelta(days=3),
