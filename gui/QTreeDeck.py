@@ -1,9 +1,11 @@
 from PySide6.QtWidgets import QTreeWidget, QAbstractItemView
+import PySide6.QtWidgets
 from learn.deck import FlashCard
 from learn.pickle import DeckManager
 from gui.deck import QDeck, QFlashCard, QDeckTitleEdit, QFlashCardEdit
 from copy import copy
 from PySide6.QtCore import Slot
+import PySide6.QtGui
 from learn.pickle import DeckManager
 from learn.quizz import TargetTimeTracker, Scheduler
 
@@ -27,11 +29,13 @@ class QTreeDeck(QTreeWidget):
 
         # Instance parameters
         ##########################
-        self.setColumnCount(1)
-        self.setHeaderLabels(["Decks"])
+        self.setColumnCount(2)
+        self.setHeaderLabels(["Decks", "Next review in..."])
         self.insertTopLevelItems(0, self.decks)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.setStyleSheet("font-size: 16px")
+        self.header().setSectionResizeMode(0, PySide6.QtWidgets.QHeaderView.ResizeToContents)
+        self.header().setSectionResizeMode(1, PySide6.QtWidgets.QHeaderView.ResizeToContents)
 
         # Connections and additional variables
         #######################################

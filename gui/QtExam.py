@@ -2,7 +2,7 @@ import sys
 from PySide6.QtCore import Qt, QTimer, Slot, QEvent, QSize
 from PySide6.QtWidgets import QWidget, QApplication, QLabel, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout
 from PySide6.QtGui import QIcon
-from gui.deck import QFlashCardView
+from gui.deck import QFlashCardView, QFlashCard
 from learn.quizz import Examiner
 import os
 from config import icons_directory
@@ -104,6 +104,7 @@ class QtExam(QWidget):
         """
         if self.success is not None:
             self.examiner.return_card(self.card, self.success)
+            self.card.set_next_review_in(self.examiner.deck)
         self.card = self.examiner.pick_card()
         self.card_viewer.set_card(self.card, face='front')
         self.timer.start(100)

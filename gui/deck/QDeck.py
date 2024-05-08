@@ -2,6 +2,8 @@ from learn.deck import Deck
 from PySide6.QtWidgets import QTreeWidgetItem
 from gui.deck import QFlashCard
 from typing import List
+from learn.pickle import DeckManager
+from datetime import datetime as dt
 
 
 class QDeck(Deck, QTreeWidgetItem):
@@ -9,6 +11,7 @@ class QDeck(Deck, QTreeWidgetItem):
     This class allows to display a Deck as a QTreeWidgetItem
     It is supposed to have only one level of children, which are its flashcards
     """
+
     def __init__(self, title: str, cards: List[QFlashCard] = None):
         """
         Adds the QFlashCard objects as children of th QDeck
@@ -28,7 +31,9 @@ class QDeck(Deck, QTreeWidgetItem):
         @rtype: QDeck
         """
         for ind, card in enumerate(deck):
-            deck[ind] = QFlashCard.from_flashcard(card)
+            q_card = QFlashCard.from_flashcard(card)
+            q_card.set_next_review_in(deck)
+            deck[ind] = q_card
         # noinspection PyTypeChecker
         q_deck = QDeck(deck.title, deck.cards)
         q_deck.key = deck.key
@@ -80,4 +85,3 @@ class QDeck(Deck, QTreeWidgetItem):
         # If the first column is set, then it corresponds to the deck's title
         if column == 0:
             self.title = text
-
