@@ -123,14 +123,17 @@ class QDeckButtons(QWidget):
         icon_files = ["sauvegarder", "add", "pencil", "copy", "paste", "cut-content-button", "trash", "frame"]
         # shortcuts:
         shortcuts = ["Ctrl+S", "Ctrl+N", "Ctrl+O", "Ctrl+C", "Ctrl+V", "Ctrl+X", "Delete", "Shift+Return"]
+        # Tool tips
+        tool_tips = ['Save', 'Create', 'Modify', 'Copy', 'Paste', 'Cut', 'Delete', '(De)activate']
 
         # Setting buttons size, icon, shortcut and adding them to layout
         ####################################################################
         self.layout = QHBoxLayout(self)
-        for button, icon_file, shortcut in zip(edit_buttons, icon_files, shortcuts):
+        for button, icon_file, shortcut, help_text in zip(edit_buttons, icon_files, shortcuts, tool_tips):
             self.layout.addWidget(button, alignment=Qt.AlignmentFlag.AlignLeft)
             icon_path = os.path.join(icons_directory, icon_file + '.png')
             # noinspection PyTypeChecker
             button.setIcon(QIcon(icon_path))
             button.setIconSize(QSize(button_size[0] // 2, button_size[1] // 2))
             button.setShortcut(shortcut)
+            button.setToolTip(help_text)
