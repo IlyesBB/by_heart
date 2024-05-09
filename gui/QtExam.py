@@ -180,6 +180,8 @@ class QtPassFailButtons(QWidget):
         self.win = QPassFailButton(False, size=button_size, parent=self)
         self.win.setShortcut('Return')
         self.fail.setShortcut('Shift+Return')
+        self.win.setToolTip('Correct response (Return)')
+        self.fail.setToolTip('Wrong response (Shift+Return)')
         # Setting layout
         ##############################
         self.layout = QHBoxLayout(self)
