@@ -54,7 +54,14 @@ class QFlashCard(FlashCard, QTreeWidgetItem):
             return
         interval = DeckManager.get_scheduler(deck).get_interval(self).days
         actual_interval = (dt.now() - card_records['Date'].iloc[-1]).days
-        self.setText(1, str(interval - actual_interval) + ' days')
+        next_review_in_days = interval - actual_interval
+        unit = 'days' if abs(next_review_in_days) > 1 else 'day'
+        self.setText(1, str(next_review_in_days) + ' ' + unit)
+        if next_review_in_days < 0:
+            background = self.background(1)
+            background.setColor(QColor.fromRgb(255, 0, 0, 127))
+            background.setStyle(Qt.SolidPattern)
+            self.setBackground(1, background)
 
     def __repr__(self):
         return 'Q' + FlashCard.__repr__(self)
