@@ -58,6 +58,7 @@ class QDeck(Deck, QTreeWidgetItem):
         ###############
         days_next_review_in = self.get_next_review_days()
         if days_next_review_in is None:
+            self.setText(1, '')
             return
         if days_next_review_in != 0:
             self.setText(1, str(days_next_review_in) + ' ' + ('days' if abs(days_next_review_in) > 1 else 'day'))
