@@ -61,7 +61,10 @@ class QFlashCard(FlashCard, QTreeWidgetItem):
         days_until_next_review = DeckManager.get_scheduler(deck).get_interval(self).days
         days_since_last_review = (dt.now() - card_records['Date'].iloc[-1]).days
         days_next_review_in = days_until_next_review - days_since_last_review
-        self.setText(1, str(days_next_review_in) + ' ' + ('days' if abs(days_next_review_in) > 1 else 'day'))
+        if days_next_review_in != 0:
+            self.setText(1, str(days_next_review_in) + ' ' + ('days' if abs(days_next_review_in) > 1 else 'day'))
+        else:
+            self.setText(1, 'Today')
         # Setting background
         #####################
         if days_next_review_in < 0:
