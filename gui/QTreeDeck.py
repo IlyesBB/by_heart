@@ -30,12 +30,12 @@ class QTreeDeck(QTreeWidget):
         # Instance parameters
         ##########################
         self.setColumnCount(2)
-        self.setHeaderLabels(["Decks", "Next review in..."])
+        self.setHeaderLabels(["Decks", "Next review"])
         self.insertTopLevelItems(0, self.decks)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.setStyleSheet("font-size: 16px")
-        self.header().setSectionResizeMode(0, PySide6.QtWidgets.QHeaderView.ResizeToContents)
-        self.header().setSectionResizeMode(1, PySide6.QtWidgets.QHeaderView.ResizeToContents)
+        self.header().setSectionResizeMode(0, PySide6.QtWidgets.QHeaderView.Stretch)
+        self.header().setStretchLastSection(False)
 
         # Connections and additional variables
         #######################################
