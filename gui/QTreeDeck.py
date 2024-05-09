@@ -187,7 +187,7 @@ class QTreeDeck(QTreeWidget):
             # No selection
             ##################
             new_item = QDeck('-- Enter deck name --')
-            self.insertTopLevelItem(0, new_item)
+            self.insertTopLevelItem(self.topLevelItemCount(), new_item)
             self.decks.append(new_item)
         else:
             # Selected a Deck
