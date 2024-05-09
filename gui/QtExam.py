@@ -35,6 +35,7 @@ class QtExam(QWidget):
         self.timer = QTimer(self)
         # self.timer_label: Label to display the elapsed time
         self.timer_label = QLabel(self)
+        self.timer_label.setStyleSheet("font-size:28px; border-radius: 5px; padding: 3px;")
         # self.exam_panel: The right-side buttons, to select success status after review
         self.buttons = QtPassFailButtons(self.timer_label, button_size=(50, 50))
         # self.card_viewer: QWebEngineView subclass instance to display flashcards
@@ -86,6 +87,7 @@ class QtExam(QWidget):
         """
         self.timer.stop()
         self.timer_label.setText('')
+        self.timer_label.setStyleSheet("font-size:28px; border-radius: 5px; padding: 3px;")
         self.examiner.end()
         self.card_viewer.reset()
         for button in [self.buttons.win, self.buttons.fail]:
