@@ -1,5 +1,7 @@
 from learn.deck import Deck
 from PySide6.QtWidgets import QTreeWidgetItem
+from PySide6.QtGui import QColor
+from PySide6.QtCore import Qt
 from gui.deck import QFlashCard
 from typing import List
 from learn.pickle import DeckManager
@@ -17,7 +19,7 @@ class QDeck(Deck, QTreeWidgetItem):
         Adds the QFlashCard objects as children of th QDeck
         """
         super().__init__(title, cards)
-        QTreeWidgetItem.__init__(self, [self.title])
+        QTreeWidgetItem.__init__(self, [self.title, ''])
         card: QFlashCard
         for card in self.cards:
             self.addChild(card)
@@ -37,7 +39,36 @@ class QDeck(Deck, QTreeWidgetItem):
         # noinspection PyTypeChecker
         q_deck = QDeck(deck.title, deck.cards)
         q_deck.key = deck.key
+        q_deck.set_next_review_text()
         return q_deck
+
+    def get_next_review_days(self) -> None | int:
+        next_review_days = [card.get_next_review_days(self) for card in self]
+        next_review_days = [days for days in next_review_days if days is not None]
+        if not next_review_days:
+            return
+        return min(next_review_days)
+
+    def set_next_review_text(self):
+        """
+        Sets the duration until next review in column 1
+        """
+        # Setting text
+        ###############
+        days_next_review_in = self.get_next_review_days()
+        if days_next_review_in is None:
+            return
+        if days_next_review_in != 0:
+            self.setText(1, str(days_next_review_in) + ' ' + ('days' if abs(days_next_review_in) > 1 else 'day'))
+        else:
+            self.setText(1, 'Today')
+        # Setting background
+        #####################
+        if days_next_review_in < 0:
+            background = self.background(1)
+            background.setColor(QColor.fromRgb(255, 0, 0, 127))
+            background.setStyle(Qt.SolidPattern)
+            self.setBackground(1, background)
 
     def add_card(self, card: QFlashCard):
         self.rename_duplicate_card(card)  # In case another card has the same question

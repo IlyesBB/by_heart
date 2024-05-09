@@ -105,6 +105,7 @@ class QtExam(QWidget):
         if self.buttons.fail.isDown() or self.buttons.win.isDown():
             self.examiner.return_card(self.card, self.buttons.win.isDown())
             self.card.set_next_review_text(self.examiner.deck)
+            self.examiner.deck.set_next_review_text()
         self.card = self.examiner.pick_card()
         self.card_viewer.set_card(self.card, face='front')
         self.timer.start(100)
