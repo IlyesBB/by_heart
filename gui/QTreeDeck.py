@@ -211,6 +211,27 @@ class QTreeDeck(QTreeWidget):
             if deck not in self.decks:
                 DeckManager.delete(deck)
 
+    @Slot()
+    def enable(self):
+        selected: [QFlashCard | QDeck] = self.selectedItems()
+        if not selected or not self.selection_at_same_level():
+            return None  # No selection, or cards from different decks, or mix of cards and decks
+        selected: [QFlashCard] | [QDeck]
+        if isinstance(selected[0], QDeck):
+            # Selected: Deck list -> list of cards of the decks
+            selected: [QDeck]
+            decks = selected
+            selected = [card for deck in selected for card in deck.cards]
+        else:
+            decks = [selected[0].parent()]
+        selected: [QFlashCard]
+        for card in selected:
+            card: QFlashCard
+            card.set_enabled(not card.is_enabled())
+            card.set_next_review_text(card.parent())
+        for deck in decks:
+            deck.set_next_review_text()
+
     def selection_at_same_level(self) -> bool:
         """
         @return: True if selected cards from different decks, or mix of cards and decks

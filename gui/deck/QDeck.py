@@ -1,11 +1,12 @@
 from learn.deck import Deck
 from PySide6.QtWidgets import QTreeWidgetItem
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QBrush
 from PySide6.QtCore import Qt
 from gui.deck import QFlashCard
 from typing import List
 from learn.pickle import DeckManager
 from datetime import datetime as dt
+from typing import List, Iterator, Callable
 
 
 class QDeck(Deck, QTreeWidgetItem):
@@ -43,7 +44,7 @@ class QDeck(Deck, QTreeWidgetItem):
         return q_deck
 
     def get_next_review_days(self) -> None | int:
-        next_review_days = [card.get_next_review_days(self) for card in self]
+        next_review_days = [card.get_next_review_days(self) for card in self if card.is_enabled()]
         next_review_days = [days for days in next_review_days if days is not None]
         if not next_review_days:
             return
@@ -64,11 +65,8 @@ class QDeck(Deck, QTreeWidgetItem):
             self.setText(1, 'Today')
         # Setting background
         #####################
-        if days_next_review_in < 0:
-            background = self.background(1)
-            background.setColor(QColor.fromRgb(255, 0, 0, 127))
-            background.setStyle(Qt.SolidPattern)
-            self.setBackground(1, background)
+        color = QColor.fromRgb(255, 0, 0, 127) if days_next_review_in < 0 else QColor.fromRgb(0, 0, 0, 255)
+        self.setForeground(1, QBrush(color, Qt.SolidPattern))
 
     def add_card(self, card: QFlashCard):
         self.rename_duplicate_card(card)  # In case another card has the same question
@@ -116,3 +114,11 @@ class QDeck(Deck, QTreeWidgetItem):
         # If the first column is set, then it corresponds to the deck's title
         if column == 0:
             self.title = text
+
+    def filter(self, func: Callable[[QFlashCard], bool]):
+        # noinspection PyTypeChecker
+        cards = list(filter(func, self))
+        deck_copy = QDeck(self.title)
+        deck_copy.cards = cards
+        deck_copy.key = self.key
+        return deck_copy

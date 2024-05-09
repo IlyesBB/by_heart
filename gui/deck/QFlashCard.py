@@ -1,7 +1,7 @@
 from learn.deck import Deck, FlashCard
 from learn.pickle import DeckManager
 from PySide6.QtWidgets import QTreeWidgetItem
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QBrush
 from PySide6.QtCore import Qt
 from typing import List
 from datetime import datetime as dt
@@ -19,6 +19,7 @@ class QFlashCard(FlashCard, QTreeWidgetItem):
         """
         FlashCard.__init__(self, question, correction)
         QTreeWidgetItem.__init__(self, [self.question, ''])
+        self.enabled = True
 
     @staticmethod
     def from_flashcard(card: FlashCard):
@@ -31,6 +32,15 @@ class QFlashCard(FlashCard, QTreeWidgetItem):
         q_card = QFlashCard(card.question, card.correction)
         q_card.key = card.key
         return q_card
+
+    def set_enabled(self, val: bool):
+        self.enabled = val
+        color = QColor.fromRgb(160, 160, 160, 255) if not self.is_enabled() else QColor.fromRgb(0, 0, 0, 255)
+        self.setForeground(0, QBrush(color, Qt.SolidPattern))
+        self.setForeground(1, QBrush(color, Qt.SolidPattern))
+
+    def is_enabled(self):
+        return self.enabled
 
     def __copy__(self):
         """
@@ -61,22 +71,17 @@ class QFlashCard(FlashCard, QTreeWidgetItem):
         """
         Sets the duration until next review in column 1
         """
-        # Setting text
-        ###############
         days_next_review_in = self.get_next_review_days(deck)
-        if days_next_review_in is None:
-            return
-        if days_next_review_in != 0:
+        foreground = QBrush(QColor.fromRgb(0, 0, 0, 255), Qt.SolidPattern)
+        if days_next_review_in is None or not self.is_enabled():
+            self.setText(1, '')
+        elif days_next_review_in != 0:
             self.setText(1, str(days_next_review_in) + ' ' + ('days' if abs(days_next_review_in) > 1 else 'day'))
+            if days_next_review_in < 0:
+                foreground.setColor(QColor.fromRgb(255, 0, 0, 127))
         else:
             self.setText(1, 'Today')
-        # Setting background
-        #####################
-        if days_next_review_in < 0:
-            background = self.background(1)
-            background.setColor(QColor.fromRgb(255, 0, 0, 127))
-            background.setStyle(Qt.SolidPattern)
-            self.setBackground(1, background)
+        self.setForeground(1, foreground)
 
     def __repr__(self):
         return 'Q' + FlashCard.__repr__(self)

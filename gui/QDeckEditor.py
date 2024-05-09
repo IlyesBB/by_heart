@@ -47,6 +47,7 @@ class QDeckEditor(QWidget):
         self.buttons.cut_button.clicked.connect(self.tree.cut)
         self.buttons.edit_button.clicked.connect(self.tree.edit_item)
         self.buttons.create_button.clicked.connect(self.tree.new)
+        self.buttons.enable_button.clicked.connect(self.tree.enable)
         self.start_button.clicked.connect(self.start_exam)
 
     @Slot()
@@ -68,16 +69,18 @@ class QDeckEditor(QWidget):
             #######################
             cards = self.tree.selectedItems()
             deck: QDeck = cards[0].parent()
-            deck = deck.filter(lambda x: x in cards)
+            filter_card = lambda x: x in cards and x.is_enabled()
         elif isinstance(item, QDeck):
             # Selected a deck
             #######################
+            filter_card = lambda x: x.is_enabled()
             deck = item
         else:
             raise TypeError('%s not of type QDeck or QFlashCard' % type(item))
         time_tracker = DeckManager.get_time_tracker(deck)
         scheduler = DeckManager.get_scheduler(deck)
         historian = DeckManager.get_historian(deck)
+        deck = deck.filter(filter_card)
         examiner = Examiner(deck, historian, time_tracker, scheduler)
         self.exam.set_examiner(examiner)
         self.exam.showMaximized()
@@ -109,16 +112,17 @@ class QDeckButtons(QWidget):
         self.delete_button = QPushButton(self)
         self.cut_button = QPushButton(self)
         self.paste_button = QPushButton(self)
+        self.enable_button = QPushButton(self)
 
         # Defining buttons icon files and shortcuts values
         ###################################################
         # edit_buttons: List of all the buttons
         edit_buttons = [self.save_button, self.create_button, self.edit_button, self.copy_button, self.paste_button,
-                        self.cut_button, self.delete_button]
+                        self.cut_button, self.delete_button, self.enable_button]
         # icon_files: File names of the buttons icons, in order
-        icon_files = ["sauvegarder", "add", "pencil", "copy", "paste", "cut-content-button", "trash"]
+        icon_files = ["sauvegarder", "add", "pencil", "copy", "paste", "cut-content-button", "trash", "frame"]
         # shortcuts:
-        shortcuts = ["Ctrl+S", "Ctrl+N", "Ctrl+O", "Ctrl+C", "Ctrl+V", "Ctrl+X", "Delete"]
+        shortcuts = ["Ctrl+S", "Ctrl+N", "Ctrl+O", "Ctrl+C", "Ctrl+V", "Ctrl+X", "Delete", "Shift+Return"]
 
         # Setting buttons size, icon, shortcut and adding them to layout
         ####################################################################
