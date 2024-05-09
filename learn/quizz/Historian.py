@@ -119,7 +119,6 @@ class Historian:
         df = pd.read_csv(path).rename(columns={'CardKey': 'Card'})
         df['Date'] = df['Date'].map(lambda dt_str: dt.strptime(dt_str, '%d-%m-%Y %H:%M:%S'))
         dict_card = {}
-
         df['Card'] = df['Card'].map(lambda key: Historian.get_card(key, deck, dict_card))
         return df
 
