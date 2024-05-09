@@ -1,6 +1,8 @@
 from learn.deck import Deck, FlashCard
 from learn.pickle import DeckManager
 from PySide6.QtWidgets import QTreeWidgetItem
+from PySide6.QtGui import QColor
+from PySide6.QtCore import Qt
 from typing import List
 from datetime import datetime as dt
 
