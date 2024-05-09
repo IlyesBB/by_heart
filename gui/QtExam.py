@@ -36,7 +36,7 @@ class QtExam(QWidget):
         # self.timer_label: Label to display the elapsed time
         self.timer_label = QLabel(self)
         # self.exam_panel: The right-side buttons, to select success status after review
-        self.exam_panel = QtPassFailButtons(self.timer_label, button_size=(50, 50))
+        self.buttons = QtPassFailButtons(self.timer_label, button_size=(50, 50))
         # self.card_viewer: QWebEngineView subclass instance to display flashcards
         self.card_viewer = QFlashCardView()
 
@@ -44,15 +44,15 @@ class QtExam(QWidget):
         ##############################
         self.layout = QVBoxLayout(self)
         self.layout.addWidget(self.card_viewer, 9)
-        self.layout.addWidget(self.exam_panel, 1)
+        self.layout.addWidget(self.buttons, 1)
 
         # Setting connections
         ##############################
         self.timer.timeout.connect(self.update_time)
-        self.exam_panel.button_pass.clicked.connect(self.set_pass)
-        self.exam_panel.button_fail.clicked.connect(self.set_fail)
-        self.exam_panel.button_pass.hide()
-        self.exam_panel.button_fail.hide()
+        self.buttons.win.clicked.connect(self.set_pass)
+        self.buttons.fail.clicked.connect(self.set_fail)
+        self.buttons.win.hide()
+        self.buttons.fail.hide()
 
         # Additional variables
         ##############################
@@ -75,7 +75,7 @@ class QtExam(QWidget):
         """
         # print(event.text(), event.modifiers())
         if event.key() == Qt.Key_Space and event.type() == QEvent.KeyPress:
-            if self.success is not None or self.card is None:
+            if self.buttons.fail.isDown() or self.buttons.win.isDown() or self.card is None:
                 self.pick_return_card()
             elif self.examiner.has_picked_card():
                 self.flip_card()
@@ -88,10 +88,10 @@ class QtExam(QWidget):
         self.timer_label.setText('')
         self.examiner.end()
         self.card_viewer.reset()
-        self.exam_panel.button_pass.hide()
-        self.exam_panel.button_fail.hide()
+        for button in [self.buttons.win, self.buttons.fail]:
+            button.hide()
+            button.setDown(False)
         self.card = None
-        self.success = None
         return QWidget.closeEvent(self, event)
 
     def pick_return_card(self) -> None:
@@ -102,15 +102,15 @@ class QtExam(QWidget):
         - Starts the timer
         - Sets success status to None
         """
-        if self.success is not None:
-            self.examiner.return_card(self.card, self.success)
+        if self.buttons.fail.isDown() or self.buttons.win.isDown():
+            self.examiner.return_card(self.card, self.buttons.win.isDown())
             self.card.set_next_review_in(self.examiner.deck)
         self.card = self.examiner.pick_card()
         self.card_viewer.set_card(self.card, face='front')
         self.timer.start(100)
-        self.exam_panel.button_pass.hide()
-        self.exam_panel.button_fail.hide()
-        self.success = None
+        for button in [self.buttons.win, self.buttons.fail]:
+            button.hide()
+            button.setDown(False)
 
     def flip_card(self) -> None:
         """
@@ -122,8 +122,8 @@ class QtExam(QWidget):
         """
         self.timer.stop()
         self.card_viewer.set_card(self.card, face='both')
-        self.exam_panel.button_pass.show()
-        self.exam_panel.button_fail.show()
+        self.buttons.win.show()
+        self.buttons.fail.show()
 
     @Slot()
     def update_time(self) -> None:
@@ -153,11 +153,13 @@ class QtExam(QWidget):
 
     @Slot()
     def set_pass(self) -> None:
-        self.success = True
+        self.buttons.fail.setDown(False)
+        self.buttons.win.setDown(True)
 
     @Slot()
     def set_fail(self) -> None:
-        self.success = False
+        self.buttons.fail.setDown(True)
+        self.buttons.win.setDown(False)
 
 
 class QtPassFailButtons(QWidget):
@@ -173,16 +175,16 @@ class QtPassFailButtons(QWidget):
         super().__init__(parent=parent)
         # Creating subwidgets
         ##############################
-        self.button_fail = QPassFailButton(True, size=button_size, parent=self)
-        self.button_pass = QPassFailButton(False, size=button_size, parent=self)
-        self.button_pass.setShortcut('Return')
-        self.button_fail.setShortcut('Shift+Return')
+        self.fail = QPassFailButton(True, size=button_size, parent=self)
+        self.win = QPassFailButton(False, size=button_size, parent=self)
+        self.win.setShortcut('Return')
+        self.fail.setShortcut('Shift+Return')
         # Setting layout
         ##############################
         self.layout = QHBoxLayout(self)
-        self.layout.addWidget(self.button_fail, alignment=Qt.AlignCenter)
+        self.layout.addWidget(self.fail, alignment=Qt.AlignCenter)
         self.layout.addWidget(timer, alignment=Qt.AlignCenter)
-        self.layout.addWidget(self.button_pass, alignment=Qt.AlignCenter)
+        self.layout.addWidget(self.win, alignment=Qt.AlignCenter)
 
 
 class QPassFailButton(QPushButton):
@@ -200,4 +202,3 @@ class QPassFailButton(QPushButton):
         icon_path = os.path.join(icons_directory, icon_file)
         self.setIcon(QIcon(icon_path))
         self.setIconSize(QSize(size[0] // 2, size[1] // 2))
-
