@@ -19,35 +19,35 @@ class DeckManager:
     Moving between decks or deleting flashcards should be done only with this class methods, and not with Deck class'
     methods.
     """
-    time_tracker: Dict[Deck, TargetTimeTracker] = {}
-    historian: Dict[Deck, Historian] = {}
-    scheduler: Dict[Deck, Scheduler] = {}
+    time_tracker: Dict[str, TargetTimeTracker] = {}
+    historian: Dict[str, Historian] = {}
+    scheduler: Dict[str, Scheduler] = {}
     decks: [Deck] = None
-    moved_cards: Set[Deck] = set()
+    moved_cards: Set[str] = set()
 
     @staticmethod
     def has_moved_cards(deck: Deck):
-        if deck not in DeckManager.moved_cards:
+        if deck.key not in DeckManager.moved_cards:
             return False
         return True
 
     @staticmethod
     def get_time_tracker(deck: Deck):
-        if deck not in DeckManager.time_tracker.keys():
-            DeckManager.time_tracker[deck] = TargetTimeTracker(deck)
-        return DeckManager.time_tracker[deck]
+        if deck.key not in DeckManager.time_tracker.keys():
+            DeckManager.time_tracker[deck.key] = TargetTimeTracker(deck)
+        return DeckManager.time_tracker[deck.key]
 
     @staticmethod
     def get_historian(deck: Deck):
-        if deck not in DeckManager.historian.keys():
-            DeckManager.historian[deck] = Historian(deck)
-        return DeckManager.historian[deck]
+        if deck.key not in DeckManager.historian.keys():
+            DeckManager.historian[deck.key] = Historian(deck)
+        return DeckManager.historian[deck.key]
 
     @staticmethod
     def get_scheduler(deck: Deck):
-        if deck not in DeckManager.scheduler.keys():
-            DeckManager.scheduler[deck] = Scheduler(deck)
-        return DeckManager.scheduler[deck]
+        if deck.key not in DeckManager.scheduler.keys():
+            DeckManager.scheduler[deck.key] = Scheduler(deck)
+        return DeckManager.scheduler[deck.key]
 
     @staticmethod
     def load() -> List[Deck]:
@@ -83,11 +83,11 @@ class DeckManager:
     @staticmethod
     def remove(deck: Deck):
         if deck in DeckManager.time_tracker.keys():
-            del DeckManager.time_tracker[deck]
+            del DeckManager.time_tracker[deck.key]
         if deck in DeckManager.historian.keys():
-            del DeckManager.historian[deck]
+            del DeckManager.historian[deck.key]
         if deck in DeckManager.scheduler.keys():
-            del DeckManager.scheduler[deck]
+            del DeckManager.scheduler[deck.key]
 
     @staticmethod
     def move_cards(cards: [FlashCard], origin: Deck, destination: Deck, index_destination=None):
@@ -115,8 +115,8 @@ class DeckManager:
         # Removing cards' data from origin
         ###################################
         DeckManager.remove_cards(cards, origin)
-        DeckManager.moved_cards.add(origin)
-        DeckManager.moved_cards.add(destination)
+        DeckManager.moved_cards.add(origin.key)
+        DeckManager.moved_cards.add(destination.key)
 
     @staticmethod
     def remove_cards(cards: [FlashCard], origin: Deck):
@@ -137,7 +137,7 @@ class DeckManager:
         scheduler_origin.remove_cards(cards)
         for card in cards:
             origin.remove_card(card)
-        DeckManager.moved_cards.add(origin)
+        DeckManager.moved_cards.add(origin.key)
 
     @staticmethod
     def clear(deck: Deck):
