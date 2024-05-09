@@ -136,4 +136,4 @@ class QDeckButtons(QWidget):
             button.setIcon(QIcon(icon_path))
             button.setIconSize(QSize(button_size[0] // 2, button_size[1] // 2))
             button.setShortcut(shortcut)
-            button.setToolTip(help_text)
+            button.setToolTip(help_text + ' (' + shortcut + ')')
