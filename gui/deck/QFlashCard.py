@@ -48,19 +48,22 @@ class QFlashCard(FlashCard, QTreeWidgetItem):
         if column == 0:
             self.question = text
 
-    def set_next_review_in(self, deck: Deck):
-        """
-        Sets the duration until next review in column 1
-        """
+    def get_next_review_days(self, deck: Deck) -> None | int:
         records = DeckManager.get_historian(deck).get_records()
         card_records = records[records['Card'] == self]
         if len(card_records) == 0:
             return
-        # Setting text
-        ###############
         days_until_next_review = DeckManager.get_scheduler(deck).get_interval(self).days
         days_since_last_review = (dt.now() - card_records['Date'].iloc[-1]).days
-        days_next_review_in = days_until_next_review - days_since_last_review
+        return days_until_next_review - days_since_last_review
+
+    def set_next_review_text(self, deck: Deck):
+        """
+        Sets the duration until next review in column 1
+        """
+        # Setting text
+        ###############
+        days_next_review_in = self.get_next_review_days(deck)
         if days_next_review_in != 0:
             self.setText(1, str(days_next_review_in) + ' ' + ('days' if abs(days_next_review_in) > 1 else 'day'))
         else:

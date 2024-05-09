@@ -32,7 +32,7 @@ class QDeck(Deck, QTreeWidgetItem):
         """
         for ind, card in enumerate(deck):
             q_card = QFlashCard.from_flashcard(card)
-            q_card.set_next_review_in(deck)
+            q_card.set_next_review_text(deck)
             deck[ind] = q_card
         # noinspection PyTypeChecker
         q_deck = QDeck(deck.title, deck.cards)
