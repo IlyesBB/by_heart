@@ -66,7 +66,6 @@ class Deck:
         if other.key != self.key:
             return False
         if len(self) != len(other):
-            print(id(self.cards), id(other.cards))
             return False
         for card, other_card in zip(self, other):
             if card != other_card:
