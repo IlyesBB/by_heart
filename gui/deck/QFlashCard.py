@@ -64,6 +64,8 @@ class QFlashCard(FlashCard, QTreeWidgetItem):
         # Setting text
         ###############
         days_next_review_in = self.get_next_review_days(deck)
+        if days_next_review_in is None:
+            return
         if days_next_review_in != 0:
             self.setText(1, str(days_next_review_in) + ' ' + ('days' if abs(days_next_review_in) > 1 else 'day'))
         else:
